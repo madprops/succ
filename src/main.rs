@@ -45,9 +45,18 @@ fn main()
         Err(e) => exit(&e)
     }
 
+    let print = !args.1;
+    let replace = !args.3;
+    let delete = !args.4;
+
     if !args.2
     {
         p!("This will succ {}", path.to_str().unwrap());
+
+        if delete
+        {
+            p!("It will delete the directory after moving the files.");
+        }
 
         if !ask_bool("Proceeed?", true)
         {
@@ -55,10 +64,7 @@ fn main()
         }
     }
 
-    let print = !args.1;
-    let replace = !args.3;
-
-    succ(path, print, replace);
+    succ(path, print, replace, delete);
 }
 
 fn exit(s: &str) -> !
@@ -71,7 +77,7 @@ fn exit(s: &str) -> !
     process::exit(0)
 }
 
-fn succ(path: PathBuf, print: bool, replace: bool)
+fn succ(path: PathBuf, print: bool, replace: bool, delete: bool)
 {
     match get_parent(&path)
     {
@@ -146,12 +152,18 @@ fn succ(path: PathBuf, print: bool, replace: bool)
                         }
                     }
 
-                    // Remove empty file
-                    match fs::remove_dir_all(&path)
+                    if delete
                     {
-                        Ok(_) => if print {p!("Done!")},
-                        Err(e) => exit(&s!(e))
+                        // If delete arg is true
+                        // remove empty directory
+                        match fs::remove_dir_all(&path)
+                        {
+                            Ok(_) => if print {p!("Directory deleted.")},
+                            Err(e) => exit(&s!(e))
+                        }
                     }
+
+                    if print {p!("Done!")}
                 },
                 Err(e) =>
                 {

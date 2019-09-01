@@ -12,10 +12,10 @@ use std::path::PathBuf;
 use clap::{App, Arg};
 
 // Starts the argument system
-pub fn check_args() -> (Result<PathBuf, std::io::Error>, bool, bool, bool)
+pub fn check_args() -> (Result<PathBuf, std::io::Error>, bool, bool, bool, bool)
 {
     let matches = App::new("succ")
-    .version("v1.1.1")
+    .version("v1.2.1")
     .about("Moves all contents of a dir to the parent dir and removes the empty dir")
     .arg(Arg::with_name("PATH")
         .help("Use a custom file path")
@@ -38,6 +38,10 @@ pub fn check_args() -> (Result<PathBuf, std::io::Error>, bool, bool, bool)
         .long("no-replace")
         .multiple(false)
         .help("Don't replace existing files/dirs with the same name"))
+    .arg(Arg::with_name("no-delete")
+        .long("no-delete")
+        .multiple(false)
+        .help("Don't delete the directory after moving files"))
     .get_matches();
     
     let path;
@@ -63,6 +67,7 @@ pub fn check_args() -> (Result<PathBuf, std::io::Error>, bool, bool, bool)
     let silent = matches.occurrences_of("silent") > 0;
     let confirm = matches.occurrences_of("yes") > 0;
     let no_replace = matches.occurrences_of("no-replace") > 0;
+    let no_delete = matches.occurrences_of("no-delete") > 0;
 
-    (absolute_path(&path), silent, confirm, no_replace)
+    (absolute_path(&path), silent, confirm, no_replace, no_delete)
 }
