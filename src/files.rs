@@ -67,3 +67,26 @@ pub fn is_file(path: &PathBuf) -> bool
 {
     fs::metadata(path).unwrap().is_file()
 }
+
+// Checks if the path is valid for succ
+pub fn check_path(path: &PathBuf) -> Result<bool, String>
+{
+    if is_file(path)
+    {
+        return Err(s!("This is not a directoy path."))
+    }
+
+    match get_file_names(path)
+    {
+        Ok(files) => 
+        {
+            if files.is_empty()
+            {
+                return Err(s!("This is an empty directory."));
+            }
+        },
+        Err(e) => return Err(e)
+    }
+
+    Ok(true)
+}

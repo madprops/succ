@@ -11,9 +11,10 @@ use crate::
     },
     files::
     {
+        is_file,
         get_parent,
         get_file_names,
-        is_file
+        check_path
     },
     input::
     {
@@ -24,7 +25,7 @@ use crate::
 use std::
 {
     process, fs,
-    path::{Path, PathBuf}
+    path::PathBuf
 };
 
 // Program starts here
@@ -37,6 +38,12 @@ fn main()
         Ok(buff) => buff,
         Err(_) => exit("Invalid path.")
     };
+
+    match check_path(&path)
+    {
+        Ok(_) => {},
+        Err(e) => exit(&e)
+    }
 
     let print = !args.1;
 
@@ -67,7 +74,7 @@ fn succ(path: PathBuf, print: bool)
 {
     match get_parent(&path)
     {
-        Ok(buff) =>
+        Ok(parent_buff) =>
         {
             match get_file_names(&path)
             {
@@ -79,10 +86,8 @@ fn succ(path: PathBuf, print: bool)
                     }
 
                     // Get parent files
-
-                    let parent = s!(buff.to_str().unwrap());
             
-                    let parent_names = match get_file_names(&buff)
+                    let parent_names = match get_file_names(&parent_buff)
                     {
                         Ok(buffs) =>
                         {
@@ -98,11 +103,12 @@ fn succ(path: PathBuf, print: bool)
 
                     for file in buffs.iter()
                     {
+                        // Get the source file name
                         let name = file.file_name().unwrap()
                                         .to_str().unwrap();
                         
-                        let fname = format!("{}/{}", parent, name);
-                        let npath = Path::new(&fname);
+                        // Get the target file path
+                        let npath = parent_buff.join(name);
 
                         // If a file or dir with the same 
                         // name exists, remove it
@@ -110,7 +116,7 @@ fn succ(path: PathBuf, print: bool)
                         {
                             if is_file(&npath.to_path_buf())
                             {
-                                match fs::remove_file(npath)
+                                match fs::remove_file(&npath)
                                 {
                                     Ok(_) => {},
                                     Err(e) => exit(&s!(e))
@@ -119,7 +125,7 @@ fn succ(path: PathBuf, print: bool)
 
                             else
                             {
-                                match fs::remove_dir_all(npath)
+                                match fs::remove_dir_all(&npath)
                                 {
                                     Ok(_) => {},
                                     Err(e) => exit(&s!(e))
@@ -128,7 +134,7 @@ fn succ(path: PathBuf, print: bool)
                         }
 
                         // Move file to parent
-                        match fs::rename(file, npath)
+                        match fs::rename(file, &npath)
                         {
                             Ok(_) => if print {p!("Copied: {}", name)},
                             Err(e) => exit(&s!(e))
