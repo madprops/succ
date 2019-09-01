@@ -14,7 +14,7 @@ use crate::
         is_file,
         get_parent,
         get_file_names,
-        check_path
+        check_path, cwd
     },
     input::
     {
@@ -60,15 +60,27 @@ fn main()
     // Exit on a non-positive response
     if !args.2
     {
+        // Show the source directory path
         p!("This will succ {}", path.to_str().unwrap());
+
+        if cwd() == path
+        {
+            // Show that this is the current working directory
+            // as one way to avoid accidental operations
+            p!("That is the current working directory.")
+        }
 
         if delete
         {
+            // If --no-delete wasn't provided then notify the user 
+            // that the directory will be deleted
             p!("It will delete the directory after moving the files.");
         }
 
         if !ask_bool("Proceed?", true)
         {
+            // Not a confirmation
+            // Exit the program
             exit("");
         }
     }

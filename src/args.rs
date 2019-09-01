@@ -3,8 +3,8 @@ use crate::
     s,
     files::
     {
-        cwd,
-        absolute_path
+        cwd_str,
+        absolute_path_str
     }
 };
 
@@ -15,7 +15,7 @@ use clap::{App, Arg};
 pub fn check_args() -> (Result<PathBuf, std::io::Error>, bool, bool, bool, bool)
 {
     let matches = App::new("succ")
-    .version("v1.2.2")
+    .version("v1.2.3")
     .about("Moves all contents of a dir to the parent dir and removes the empty dir")
     .arg(Arg::with_name("PATH")
         .help("Use a custom file path")
@@ -61,7 +61,7 @@ pub fn check_args() -> (Result<PathBuf, std::io::Error>, bool, bool, bool, bool)
     else
     {
         // Else use default path
-        path = cwd();
+        path = cwd_str();
     }
 
     let silent = matches.occurrences_of("silent") > 0;
@@ -69,5 +69,5 @@ pub fn check_args() -> (Result<PathBuf, std::io::Error>, bool, bool, bool, bool)
     let no_replace = matches.occurrences_of("no-replace") > 0;
     let no_delete = matches.occurrences_of("no-delete") > 0;
 
-    (absolute_path(&path), silent, confirm, no_replace, no_delete)
+    (absolute_path_str(&path), silent, confirm, no_replace, no_delete)
 }

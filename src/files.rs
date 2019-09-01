@@ -10,13 +10,16 @@ use std::
 };
 
 // Gets the current working directory
-pub fn cwd() -> String
+pub fn cwd() -> PathBuf
 {
-    env::current_dir()
-        .unwrap()
-        .to_str()
-        .unwrap()
-        .to_string()
+    absolute_path(&env::current_dir().unwrap()).unwrap()
+}
+
+// Gets the current working directory
+// This version returns a string
+pub fn cwd_str() -> String
+{
+    s!(cwd().to_str().unwrap())
 }
 
 // Gets the path parent
@@ -26,14 +29,20 @@ pub fn get_parent(path: &PathBuf) -> Result<PathBuf, String>
     {
         Some(pth) =>
         {
-            Ok(pth.to_path_buf())
+            Ok(absolute_path(&pth.to_path_buf()).unwrap())
         },
         None => Err(s!("Can't get the parent directory."))
     }
 }
 
-// Gets the absolute path
-pub fn absolute_path(path: &str) -> Result<PathBuf, std::io::Error>
+// Gets the absolute path from a path
+pub fn absolute_path(path: &PathBuf) -> Result<PathBuf, std::io::Error>
+{
+    fs::canonicalize(path)
+}
+
+// Gets the absolute path from a string
+pub fn absolute_path_str(path: &str) -> Result<PathBuf, std::io::Error>
 {
     fs::canonicalize(path)
 }
