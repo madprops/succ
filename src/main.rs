@@ -31,24 +31,33 @@ use std::
 // Program starts here
 fn main()
 {
+    // Check for arguments
     let args = check_args();
 
+    // Check if path is valid
     let path = match args.0
     {
         Ok(buff) => buff,
         Err(_) => exit("Invalid path.")
     };
 
+    // Additonal checks to
+    // make sure the operations
+    // can be performed
     match check_path(&path)
     {
         Ok(_) => {},
         Err(e) => exit(&e)
     }
 
+    // Get other arguments ready
     let print = !args.1;
     let replace = !args.3;
     let delete = !args.4;
 
+    // If --yes is not provided 
+    // then show the confirmation prompt
+    // Exit on a non-positive response
     if !args.2
     {
         p!("This will succ {}", path.to_str().unwrap());
@@ -64,9 +73,12 @@ fn main()
         }
     }
 
+    // Perform the file operations
     succ(path, print, replace, delete);
 }
 
+// Custom function to exit
+// with an optional message
 fn exit(s: &str) -> !
 {
     if !s.is_empty()
@@ -77,6 +89,8 @@ fn exit(s: &str) -> !
     process::exit(0)
 }
 
+// Moves the files to the parent directory
+// Some actions are enabled or disabled by arguments
 fn succ(path: PathBuf, print: bool, replace: bool, delete: bool)
 {
     // Try to get the parent path
