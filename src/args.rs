@@ -15,7 +15,7 @@ use clap::{App, Arg};
 pub fn check_args() -> (Result<PathBuf, std::io::Error>, bool, bool, bool, bool)
 {
     let matches = App::new("succ")
-    .version("v1.2.1")
+    .version("v1.2.2")
     .about("Moves all contents of a dir to the parent dir and removes the empty dir")
     .arg(Arg::with_name("PATH")
         .help("Use a custom file path")

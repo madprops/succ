@@ -79,25 +79,22 @@ fn exit(s: &str) -> !
 
 fn succ(path: PathBuf, print: bool, replace: bool, delete: bool)
 {
+    // Try to get the parent path
     match get_parent(&path)
     {
         Ok(parent_buff) =>
         {
+            // Get the directory files
             match get_file_names(&path)
             {
                 Ok(buffs) =>
                 {
-                    if buffs.is_empty()
-                    {
-                        exit("Directory is empty.");
-                    }
-
                     // Get parent files
-            
                     let parent_names = match get_file_names(&parent_buff)
                     {
                         Ok(buffs) =>
                         {
+                            // Get the file names for comparisons
                             buffs.iter().map(|b| b.file_name().unwrap()
                                         .to_str().unwrap())
                                         .map(|s| s!(s))
@@ -125,8 +122,12 @@ fn succ(path: PathBuf, print: bool, replace: bool, delete: bool)
                             // leave the original file intact
                             if !replace {continue}
 
+                            // Check if original is a file
+                            // or a directory to know what
+                            // delete method to use
                             if is_file(&npath.to_path_buf())
                             {
+                                // Remove file
                                 match fs::remove_file(&npath)
                                 {
                                     Ok(_) => {},
@@ -136,6 +137,7 @@ fn succ(path: PathBuf, print: bool, replace: bool, delete: bool)
 
                             else
                             {
+                                // Remove directory
                                 match fs::remove_dir_all(&npath)
                                 {
                                     Ok(_) => {},
@@ -163,12 +165,10 @@ fn succ(path: PathBuf, print: bool, replace: bool, delete: bool)
                         }
                     }
 
+                    // Everything is done
                     if print {p!("Done!")}
                 },
-                Err(e) =>
-                {
-                    exit(&e)
-                }
+                Err(e) => exit(&e)
             }
         },
         Err(e) => exit(&e)
