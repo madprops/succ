@@ -42,7 +42,9 @@ fn main()
 
     if !args.2
     {
-        if !ask_bool("[succ] Proceeed?", true)
+        p!("This will succ {}", path.to_str().unwrap());
+
+        if !ask_bool("Proceeed?", true)
         {
             exit("");
         }
