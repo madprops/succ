@@ -61,6 +61,22 @@ pub fn get_file_names(path: &PathBuf) -> Result<Vec<PathBuf>, String>
     Ok(names)
 }
 
+// Returns the number of files
+pub fn count_files(path: &PathBuf) -> usize
+{
+    match fs::read_dir(path)
+    {
+        Ok(files) =>
+        {
+            files.count()
+        },
+        Err(_) =>
+        {
+            0
+        }
+    }
+}
+
 // True if file 
 // False if directory
 pub fn is_file(path: &PathBuf) -> bool
@@ -73,19 +89,12 @@ pub fn check_path(path: &PathBuf) -> Result<bool, String>
 {
     if is_file(path)
     {
-        return Err(s!("This is not a directoy path."))
+        return Err(s!("This is not a directoy path."));
     }
 
-    match get_file_names(path)
+    if count_files(path) == 0
     {
-        Ok(files) => 
-        {
-            if files.is_empty()
-            {
-                return Err(s!("This is an empty directory."));
-            }
-        },
-        Err(e) => return Err(e)
+        return Err(s!("This is an empty directory."));
     }
 
     Ok(true)

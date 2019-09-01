@@ -45,8 +45,6 @@ fn main()
         Err(e) => exit(&e)
     }
 
-    let print = !args.1;
-
     if !args.2
     {
         p!("This will succ {}", path.to_str().unwrap());
@@ -57,7 +55,10 @@ fn main()
         }
     }
 
-    succ(path, print);
+    let print = !args.1;
+    let replace = !args.3;
+
+    succ(path, print, replace);
 }
 
 fn exit(s: &str) -> !
@@ -70,7 +71,7 @@ fn exit(s: &str) -> !
     process::exit(0)
 }
 
-fn succ(path: PathBuf, print: bool)
+fn succ(path: PathBuf, print: bool, replace: bool)
 {
     match get_parent(&path)
     {
@@ -114,6 +115,10 @@ fn succ(path: PathBuf, print: bool)
                         // name exists, remove it
                         if parent_names.contains(&s!(name))
                         {
+                            // If no-replace arg was supplied
+                            // leave the original file intact
+                            if !replace {continue}
+
                             if is_file(&npath.to_path_buf())
                             {
                                 match fs::remove_file(&npath)
@@ -136,7 +141,7 @@ fn succ(path: PathBuf, print: bool)
                         // Move file to parent
                         match fs::rename(file, &npath)
                         {
-                            Ok(_) => if print {p!("Copied: {}", name)},
+                            Ok(_) => if print {p!("Moved: {}", name)},
                             Err(e) => exit(&s!(e))
                         }
                     }
