@@ -13,6 +13,20 @@ macro_rules! p
 }
 
 #[macro_export]
+macro_rules! pp 
+{
+    ($left:expr, $right:expr) => 
+    {
+        print!($left, $right);
+    };
+
+    ($left:expr) => 
+    {
+        print!("{}", $left);
+    };
+}
+
+#[macro_export]
 macro_rules! s 
 {
     ($s: expr) => 

@@ -12,11 +12,10 @@ use std::path::PathBuf;
 use clap::{App, Arg};
 
 // Starts the argument system
-pub fn check_arguments() -> (Result<PathBuf, std::io::Error>, bool)
+pub fn check_arguments() -> (Result<PathBuf, std::io::Error>, bool, bool)
 {
-
-    let matches = App::new("Succ")
-    .version("v1.0.0")
+    let matches = App::new("succ")
+    .version("v1.0.1")
     .about("Moves all contents of a dir to the parent dir and removes the empty dir")
     .arg(Arg::with_name("PATH")
         .help("Use a custom file path")
@@ -31,6 +30,10 @@ pub fn check_arguments() -> (Result<PathBuf, std::io::Error>, bool)
         .long("silent")
         .multiple(false)
         .help("Shows no output except errors"))
+    .arg(Arg::with_name("yes")
+        .long("yes")
+        .multiple(false)
+        .help("Confirms the operation automatically"))
     .get_matches();
     
     let path;
@@ -54,6 +57,7 @@ pub fn check_arguments() -> (Result<PathBuf, std::io::Error>, bool)
     }
 
     let silent = matches.occurrences_of("silent") > 0;
+    let confirm = matches.occurrences_of("yes") > 0;
 
-    (absolute_path(&path), silent)
+    (absolute_path(&path), silent, confirm)
 }

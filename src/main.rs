@@ -1,10 +1,10 @@
 mod macros;
-mod arguments;
+mod args;
 mod files;
 
 use crate::
 {
-    arguments::
+    args::
     {
         check_arguments
     },
@@ -19,10 +19,8 @@ use crate::
 use std::
 {
     process, fs,
-    path::
-    {
-        Path, PathBuf
-    }
+    path::{Path, PathBuf},
+    io::{self, Write}
 };
 
 // Program starts here
@@ -33,10 +31,21 @@ fn main()
     let path = match args.0
     {
         Ok(buff) => buff,
-        Err(e) => exit("Invalid path.")
+        Err(_) => exit("Invalid path.")
     };
 
     let print = !args.1;
+
+    if !args.2
+    {
+        let ans = &ask_input("Proceed? (y/n)")
+                    .trim().to_lowercase()[..];
+
+        if ans != "y"
+        {
+            exit("");
+        }
+    }
 
     succ(path, print);
 }
@@ -49,6 +58,20 @@ fn exit(s: &str) -> !
     }
 
     process::exit(0);
+}
+
+fn ask_input(s: &str) -> String
+{
+    pp!(format!("{}: ", s));
+    io::stdout().flush().unwrap();
+
+    let mut input = s!();
+
+    match io::stdin().read_line(&mut input) 
+    {
+        Ok(_) => input,
+        Err(_) => s!()
+    }
 }
 
 fn succ(path: PathBuf, print: bool)
@@ -74,7 +97,8 @@ fn succ(path: PathBuf, print: bool)
                     {
                         Ok(buffs) =>
                         {
-                            buffs.iter().map(|b| b.file_name().unwrap().to_str().unwrap())
+                            buffs.iter().map(|b| b.file_name().unwrap()
+                                        .to_str().unwrap())
                                         .map(|s| s!(s))
                                         .collect::<Vec<String>>()
                         },
@@ -85,8 +109,8 @@ fn succ(path: PathBuf, print: bool)
 
                     for file in buffs.iter()
                     {
-                        let name = file.file_name()
-                                        .unwrap().to_str().unwrap();
+                        let name = file.file_name().unwrap()
+                                        .to_str().unwrap();
                         
                         let fname = format!("{}/{}", parent, name);
                         let npath = Path::new(&fname);
