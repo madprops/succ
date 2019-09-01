@@ -57,7 +57,7 @@ fn exit(s: &str) -> !
         p!(s);
     }
 
-    process::exit(0);
+    process::exit(0)
 }
 
 fn ask_input(s: &str) -> String
@@ -105,7 +105,7 @@ fn succ(path: PathBuf, print: bool)
                         Err(e) => exit(&e)
                     };
 
-                    // Process files
+                    // Start move
 
                     for file in buffs.iter()
                     {
@@ -115,9 +115,11 @@ fn succ(path: PathBuf, print: bool)
                         let fname = format!("{}/{}", parent, name);
                         let npath = Path::new(&fname);
 
-                        if parent_names.contains(&fname)
+                        // If a file or dir with the same 
+                        // name exists, remove it
+                        if parent_names.contains(&s!(name))
                         {
-                            if is_file(file)
+                            if is_file(&npath.to_path_buf())
                             {
                                 match fs::remove_file(npath)
                                 {
@@ -136,6 +138,7 @@ fn succ(path: PathBuf, print: bool)
                             }
                         }
 
+                        // Move file to parent
                         match fs::rename(file, npath)
                         {
                             Ok(_) => if print {p!("Copied: {}", name)},
@@ -143,6 +146,7 @@ fn succ(path: PathBuf, print: bool)
                         }
                     }
 
+                    // Remove empty file
                     match fs::remove_dir_all(&path)
                     {
                         Ok(_) => if print {p!("Done!")},
