@@ -6,7 +6,7 @@ use crate::
 {
     args::
     {
-        check_arguments
+        check_args
     },
     files::
     {
@@ -26,7 +26,7 @@ use std::
 // Program starts here
 fn main()
 {
-    let args = check_arguments();
+    let args = check_args();
 
     let path = match args.0
     {

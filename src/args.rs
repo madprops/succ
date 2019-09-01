@@ -12,7 +12,7 @@ use std::path::PathBuf;
 use clap::{App, Arg};
 
 // Starts the argument system
-pub fn check_arguments() -> (Result<PathBuf, std::io::Error>, bool, bool)
+pub fn check_args() -> (Result<PathBuf, std::io::Error>, bool, bool)
 {
     let matches = App::new("succ")
     .version("v1.0.1")
