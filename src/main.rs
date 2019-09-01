@@ -58,7 +58,7 @@ fn main()
             p!("It will delete the directory after moving the files.");
         }
 
-        if !ask_bool("Proceeed?", true)
+        if !ask_bool("Proceed?", true)
         {
             exit("");
         }
