@@ -29,15 +29,15 @@ pub fn check_args() -> (Result<PathBuf, std::io::Error>, bool, bool, bool)
     .arg(Arg::with_name("silent")
         .long("silent")
         .multiple(false)
-        .help("Shows no output except errors"))
+        .help("Show no output except errors"))
     .arg(Arg::with_name("yes")
         .long("yes")
         .multiple(false)
-        .help("Confirms the operation automatically"))
+        .help("Confirm the operation automatically"))
     .arg(Arg::with_name("no-replace")
         .long("no-replace")
         .multiple(false)
-        .help("Doesn't replace existing files/dirs with the same name"))
+        .help("Don't replace existing files/dirs with the same name"))
     .get_matches();
     
     let path;
