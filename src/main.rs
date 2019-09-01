@@ -1,6 +1,7 @@
 mod macros;
 mod args;
 mod files;
+mod input;
 
 use crate::
 {
@@ -13,14 +14,17 @@ use crate::
         get_parent,
         get_file_names,
         is_file
+    },
+    input::
+    {
+        ask_bool
     }
 };
 
 use std::
 {
     process, fs,
-    path::{Path, PathBuf},
-    io::{self, Write}
+    path::{Path, PathBuf}
 };
 
 // Program starts here
@@ -38,10 +42,7 @@ fn main()
 
     if !args.2
     {
-        let ans = &ask_input("Proceed? (y/n)")
-                    .trim().to_lowercase()[..];
-
-        if ans != "y"
+        if !ask_bool("[succ] Proceeed?", true)
         {
             exit("");
         }
@@ -58,20 +59,6 @@ fn exit(s: &str) -> !
     }
 
     process::exit(0)
-}
-
-fn ask_input(s: &str) -> String
-{
-    pp!(format!("{}: ", s));
-    io::stdout().flush().unwrap();
-
-    let mut input = s!();
-
-    match io::stdin().read_line(&mut input) 
-    {
-        Ok(_) => input,
-        Err(_) => s!()
-    }
 }
 
 fn succ(path: PathBuf, print: bool)
