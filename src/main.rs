@@ -1,3 +1,6 @@
+// The program version
+const VERSION: &str = "v1.2.3";
+
 mod macros;
 mod args;
 mod files;
