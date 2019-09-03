@@ -1,5 +1,5 @@
 // The program version
-const VERSION: &str = "v1.2.3";
+const VERSION: &str = "v1.3.0";
 
 mod macros;
 mod args;
@@ -113,8 +113,21 @@ fn succ(path: PathBuf, print: bool, replace: bool, delete: bool)
     {
         Ok(parent_buff) =>
         {
+            // Rename directory to something else
+            // This is to avoid collisions
+
+            let sname = format!("__succ__{}", path.file_name().unwrap()
+                                                    .to_str().unwrap());
+            let spath = parent_buff.join(sname);
+
+            match fs::rename(&path, &spath)
+            {
+                Ok(_) => {},
+                Err(e) => exit(&s!(e))
+            }
+
             // Get the directory files
-            match get_file_names(&path)
+            match get_file_names(&spath)
             {
                 Ok(buffs) =>
                 {
@@ -176,7 +189,7 @@ fn succ(path: PathBuf, print: bool, replace: bool, delete: bool)
                         }
 
                         // Move file to parent
-                        match fs::rename(file, &npath)
+                        match fs::rename(&file, &npath)
                         {
                             Ok(_) => if print {p!("Moved: {}", name)},
                             Err(e) => exit(&s!(e))
@@ -187,7 +200,7 @@ fn succ(path: PathBuf, print: bool, replace: bool, delete: bool)
                     {
                         // If delete arg is true
                         // remove empty directory
-                        match fs::remove_dir_all(&path)
+                        match fs::remove_dir_all(&spath)
                         {
                             Ok(_) => if print {p!("Directory deleted.")},
                             Err(e) => exit(&s!(e))
